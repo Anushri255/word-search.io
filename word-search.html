@@ -44,6 +44,12 @@
         #word-list li {
             font-size: 18px;
             color: #555;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        #word-list li.selected {
+            background-color: #ddd;
         }
 
         .highlighted {
@@ -58,13 +64,12 @@
 <body>
     <h1>Word Search Game</h1>
     <div id="word-list">
-        <h3>Find these words:</h3>
+        <h3>Choose a word to find:</h3>
         <ul>
-            <li>Word 1 </li>
-            <li>Word 2 </li>
-            <li>Word 3 </li>
-
-            </ul>
+            <li>TEST</li>
+            <li>WORD</li>
+            <li>SEARCH</li>
+        </ul>
     </div>
     <div id="group">
         <table id="word-search">
@@ -74,8 +79,8 @@
     <script>
         const grid = [
             ['T', 'E', 'S', 'T', 'X', 'X', 'X', 'X', 'X', 'X'],
-            ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
-            ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+            ['W', 'O', 'R', 'D', 'X', 'X', 'X', 'X', 'X', 'X'],
+            ['S', 'E', 'A', 'R', 'C', 'H', 'X', 'X', 'X', 'X'],
             ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
             ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
             ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
@@ -86,8 +91,9 @@
         ];
 
         const wordSearchGrid = document.getElementById('word-search');
-        const wordToFind = "TEST";
+        let selectedWord = "";
 
+        // Populate the grid
         for (let i = 0; i < grid.length; i++) {
             const tr = document.createElement('tr');
             for (let j = 0; j < grid[i].length; j++) {
@@ -98,33 +104,46 @@
             wordSearchGrid.appendChild(tr);
         }
 
+var wordListItems = document.querySelectorAll('#word-list li');
+
+for (var i = 0; i < wordListItems.length; i++) {
+    wordListItems[i].addEventListener('click', function() {
+        for (var j = 0; j < wordListItems.length; j++) {
+            wordListItems[j].classList.remove('selected');
+        }
+        this.classList.add('selected');
+        selectedWord = this.textContent;
+    });
+}
+
+
         let selectedCells = [];
 
         wordSearchGrid.addEventListener('click', function(event) {
-    if (event.target.tagName === 'TD') {
-        event.target.classList.add('highlighted');
-        selectedCells.push(event.target);
+            if (event.target.tagName === 'TD' && selectedWord) {
+                event.target.classList.add('highlighted');
+                selectedCells.push(event.target);
 
-        if (selectedCells.length === wordToFind.length) {
-            var selectedWord = "";
-            for (var i = 0; i < selectedCells.length; i++) {
-                selectedWord += selectedCells[i].textContent;
-            }
+                if (selectedCells.length === selectedWord.length) {
+                    let formedWord = "";
+                    for (const cell of selectedCells) {
+                        formedWord += cell.textContent;
+                    }
 
-            if (selectedWord === wordToFind) {
-                for (var i = 0; i < selectedCells.length; i++) {
-                    selectedCells[i].classList.add('correctWord');
+                    if (formedWord === selectedWord) {
+                        for (const cell of selectedCells) {
+                            cell.classList.add('correctWord');
+                        }
+                    } else {
+                        for (const cell of selectedCells) {
+                            cell.classList.remove('highlighted');
+                        }
+                    }
+
+                    selectedCells = []; // Reset after checking
                 }
-            } else {
-                for (var i = 0; i < selectedCells.length; i++) {
-                    selectedCells[i].classList.remove('highlighted');
-                }
             }
-
-            selectedCells = []; 
-        }
-    }
-});
+        });
 
     </script>
 </body>
