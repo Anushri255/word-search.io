@@ -74,10 +74,8 @@
     </div>
     <div id="word-list">
         <h3>Choose a word to find:</h3>
-        <ul>
-            <li>TEST</li>
-            <li>WORD</li>
-            <li>SEARCH</li>
+        <ul id="word-list-ul">
+            <!-- Custom words will be inserted here -->
         </ul>
     </div>
     <div id="group">
@@ -85,19 +83,7 @@
     </div>
     
     <script>
-        let grid = [
-            ['T', 'E', 'S', 'T', 'X', 'X', 'X', 'X', 'X', 'X'],
-            ['W', 'O', 'R', 'D', 'X', 'X', 'X', 'X', 'X', 'X'],
-            ['S', 'E', 'A', 'R', 'C', 'H', 'X', 'X', 'X', 'X'],
-            ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
-            ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
-            ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
-            ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
-            ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
-            ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
-            ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']
-        ];
-
+        let grid = Array.from({ length: 10 }, () => Array(10).fill('X'));
         const wordSearchGrid = document.getElementById('word-search');
         let selectedWord = "";
 
@@ -114,18 +100,48 @@
             }
         }
 
+        function placeWord(word, x, y, direction) {
+            if (direction === 'horizontal') {
+                if (y + word.length <= 10) {
+                    for (let i = 0; i < word.length; i++) {
+                        grid[x][y + i] = word[i];
+                    }
+                    return true;
+                }
+            } else if (direction === 'vertical') {
+                if (x + word.length <= 10) {
+                    for (let i = 0; i < word.length; i++) {
+                        grid[x + i][y] = word[i];
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
         function generateCustomGrid(words) {
             grid = Array.from({ length: 10 }, () => Array(10).fill('X'));
             words.forEach(word => {
-                let startX = Math.floor(Math.random() * 10);
-                let startY = Math.floor(Math.random() * 10);
-                for (let i = 0; i < word.length; i++) {
-                    if (startX + i < 10) {
-                        grid[startX + i][startY] = word[i];
-                    }
+                let placed = false;
+                while (!placed) {
+                    const direction = Math.random() < 0.5 ? 'horizontal' : 'vertical';
+                    const startX = Math.floor(Math.random() * 10);
+                    const startY = Math.floor(Math.random() * 10);
+                    placed = placeWord(word, startX, startY, direction);
                 }
             });
             drawGrid();
+            updateWordList(words);
+        }
+
+        function updateWordList(words) {
+            const wordListUl = document.getElementById('word-list-ul');
+            wordListUl.innerHTML = '';
+            words.forEach(word => {
+                const li = document.createElement('li');
+                li.textContent = word;
+                wordListUl.appendChild(li);
+            });
         }
 
         document.getElementById('play-default').addEventListener('click', function() {
@@ -145,17 +161,18 @@
             document.getElementById('custom-input').style.display = 'none';
         });
 
-        const wordListItems = document.querySelectorAll('#word-list li');
+        const wordListUl = document.getElementById('word-list-ul');
 
-        for (let i = 0; i < wordListItems.length; i++) {
-            wordListItems[i].addEventListener('click', function() {
-                for (let j = 0; j < wordListItems.length; j++) {
-                    wordListItems[j].classList.remove('selected');
+        wordListUl.addEventListener('click', function(event) {
+            if (event.target.tagName === 'LI') {
+                const wordListItems = wordListUl.getElementsByTagName('li');
+                for (let i = 0; i < wordListItems.length; i++) {
+                    wordListItems[i].classList.remove('selected');
                 }
-                this.classList.add('selected');
-                selectedWord = this.textContent;
-            });
-        }
+                event.target.classList.add('selected');
+                selectedWord = event.target.textContent;
+            }
+        });
 
         let selectedCells = [];
 
