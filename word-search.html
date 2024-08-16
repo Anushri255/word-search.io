@@ -83,6 +83,7 @@
     </div>
     
     <script>
+        const predefinedWords = ['TEST', 'WORD', 'SEARCH'];
         let grid = Array.from({ length: 10 }, () => Array(10).fill('X'));
         const wordSearchGrid = document.getElementById('word-search');
         let selectedWord = "";
@@ -119,8 +120,19 @@
             return false;
         }
 
+        function fillWithRandomLetters() {
+            for (let i = 0; i < grid.length; i++) {
+                for (let j = 0; j < grid[i].length; j++) {
+                    if (grid[i][j] === 'X') {
+                        grid[i][j] = String.fromCharCode(Math.floor(Math.random() * 26) + 65);
+                    }
+                }
+            }
+        }
+
         function generateCustomGrid(words) {
             grid = Array.from({ length: 10 }, () => Array(10).fill('X'));
+
             words.forEach(word => {
                 let placed = false;
                 while (!placed) {
@@ -130,6 +142,8 @@
                     placed = placeWord(word, startX, startY, direction);
                 }
             });
+
+            fillWithRandomLetters();
             drawGrid();
             updateWordList(words);
         }
@@ -145,8 +159,9 @@
         }
 
         document.getElementById('play-default').addEventListener('click', function() {
+            generateCustomGrid(predefinedWords);
             document.getElementById('group').style.display = 'inline-block';
-            drawGrid();
+            document.getElementById('custom-input').style.display = 'none';
         });
 
         document.getElementById('play-custom').addEventListener('click', function() {
