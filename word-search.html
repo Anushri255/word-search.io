@@ -12,6 +12,14 @@
             color: #ee5353;
         }
 
+        #main-menu {
+            margin-top: 20px;
+        }
+
+        #game-container, #custom-game {
+            display: none;
+        }
+
         #group {
             display: inline-block;
             margin-top: 20px;
@@ -59,30 +67,68 @@
         .correctWord {
             background-color: #90ee90; 
         }
+
+        #user-input {
+            margin: 20px;
+        }
+
+        #user-input input {
+            font-size: 18px;
+            padding: 5px;
+        }
+
+        #user-input button {
+            font-size: 18px;
+            padding: 5px;
+            margin-left: 5px;
+        }
     </style>
 </head>
 <body>
     <h1>Word Search Game</h1>
-    <div id="word-list">
-        <h3>Choose a word to find:</h3>
-        <ul>
-            <li>TEST</li>
-            <li>WORD</li>
-            <li>SEARCH</li>
-        </ul>
+    <div id="main-menu">
+        <button id="default-game">Start Default Game</button>
+        <button id="custom-game">Start Custom Game</button>
     </div>
-    <div id="group">
-        <table id="word-search">
-        </table>
+
+    <div id="game-container">
+        <div id="word-list">
+            <h3>Choose a word to find:</h3>
+            <ul>
+                <li>TEST</li>
+                <li>WORD</li>
+                <li>SEARCH</li>
+            </ul>
+        </div>
+        <div id="group">
+            <table id="word-search">
+            </table>
+        </div>
+    </div>
+
+    <div id="custom-game">
+        <div id="user-input">
+            <input type="text" id="new-word" placeholder="Enter a new word">
+            <button id="add-word">Add Word</button>
+        </div>
+        <div id="word-list">
+            <h3>Enter words to include:</h3>
+            <ul id="custom-word-list">
+            </ul>
+        </div>
+        <div id="group">
+            <table id="word-search">
+            </table>
+        </div>
     </div>
     
     <script>
-        const grid = [
+        let grid = [
             ['T', 'E', 'S', 'T', 'X', 'X', 'X', 'X', 'X', 'X'],
             ['W', 'O', 'R', 'D', 'X', 'X', 'X', 'X', 'X', 'X'],
             ['S', 'E', 'A', 'R', 'C', 'H', 'X', 'X', 'X', 'X'],
             ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
-            ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+            ['A', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
             ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
             ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
             ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
@@ -90,36 +136,148 @@
             ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']
         ];
 
-        const wordSearchGrid = document.getElementById('word-search');
-        let selectedWord = "";
+        const defaultWords = [
+            'TEST',
+            'WORD',
+            'SEARCH'
+        ];
 
-        // Populate the grid
-        for (let i = 0; i < grid.length; i++) {
-            const tr = document.createElement('tr');
-            for (let j = 0; j < grid[i].length; j++) {
-                const td = document.createElement('td');
-                td.textContent = grid[i][j];
-                tr.appendChild(td);
+        function drawGrid() {
+            const wordSearchGrid = document.getElementById('word-search');
+            wordSearchGrid.innerHTML = '';
+
+            for (let i = 0; i < grid.length; i++) {
+                const tr = document.createElement('tr');
+                for (let j = 0; j < grid[i].length; j++) {
+                    const td = document.createElement('td');
+                    td.textContent = grid[i][j];
+                    tr.appendChild(td);
+                }
+                wordSearchGrid.appendChild(tr);
             }
-            wordSearchGrid.appendChild(tr);
         }
 
-var wordListItems = document.querySelectorAll('#word-list li');
+        function placeWord(word) {
+            for (let row = 0; row < grid.length; row++) {
+                for (let col = 0; col <= grid[row].length - word.length; col++) {
+                    let canPlace = true;
+                    for (let k = 0; k < word.length; k++) {
+                        if (grid[row][col + k] !== 'X' && grid[row][col + k] !== word[k]) {
+                            canPlace = false;
+                            break;
+                        }
+                    }
+                    if (canPlace) {
+                        for (let k = 0; k < word.length; k++) {
+                            grid[row][col + k] = word[k];
+                        }
+                        return;
+                    }
+                }
+            }
 
-for (var i = 0; i < wordListItems.length; i++) {
-    wordListItems[i].addEventListener('click', function() {
-        for (var j = 0; j < wordListItems.length; j++) {
-            wordListItems[j].classList.remove('selected');
+            for (let col = 0; col < grid[0].length; col++) {
+                for (let row = 0; row <= grid.length - word.length; row++) {
+                    let canPlace = true;
+                    for (let k = 0; k < word.length; k++) {
+                        if (grid[row + k][col] !== 'X' && grid[row + k][col] !== word[k]) {
+                            canPlace = false;
+                            break;
+                        }
+                    }
+                    if (canPlace) {
+                        for (let k = 0; k < word.length; k++) {
+                            grid[row + k][col] = word[k];
+                        }
+                        return;
+                    }
+                }
+            }
         }
-        this.classList.add('selected');
-        selectedWord = this.textContent;
-    });
-}
 
+        function addWordToGrid(word) {
+            for (let i = 0; i < grid.length; i++) {
+                for (let j = 0; j < grid[i].length; j++) {
+                    if (grid[i][j] === 'X' && j + word.length <= grid[i].length) {
+                        let fits = true;
+                        for (let k = 0; k < word.length; k++) {
+                            if (grid[i][j + k] !== 'X' && grid[i][j + k] !== word[k]) {
+                                fits = false;
+                                break;
+                            }
+                        }
+                        if (fits) {
+                            for (let k = 0; k < word.length; k++) {
+                                grid[i][j + k] = word[k];
+                            }
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
 
+        function setupDefaultGame() {
+            grid = [
+                ['T', 'E', 'S', 'T', 'X', 'X', 'X', 'X', 'X', 'X'],
+                ['W', 'O', 'R', 'D', 'X', 'X', 'X', 'X', 'X', 'X'],
+                ['S', 'E', 'A', 'R', 'C', 'H', 'X', 'X', 'X', 'X'],
+                ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+                ['A', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+                ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+                ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+                ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+                ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+                ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']
+            ];
+            defaultWords.forEach(word => placeWord(word));
+            document.getElementById('custom-game').style.display = 'none';
+            document.getElementById('game-container').style.display = 'block';
+            drawGrid();
+        }
+
+        function setupCustomGame() {
+            grid = Array(10).fill(null).map(() => Array(10).fill('X'));
+            document.getElementById('game-container').style.display = 'none';
+            document.getElementById('custom-game').style.display = 'block';
+            drawGrid();
+        }
+
+        document.getElementById('default-game').addEventListener('click', setupDefaultGame);
+        document.getElementById('custom-game').addEventListener('click', setupCustomGame);
+
+        document.getElementById('add-word').addEventListener('click', function() {
+            const newWordInput = document.getElementById('new-word');
+            const newWord = newWordInput.value.trim().toUpperCase();
+
+            if (newWord) {
+                const newListItem = document.createElement('li');
+                newListItem.textContent = newWord;
+
+                newListItem.addEventListener('click', function() {
+                    for (let j = 0; j < document.querySelectorAll('#custom-word-list li').length; j++) {
+                        document.querySelectorAll('#custom-word-list li')[j].classList.remove('selected');
+                    }
+                    this.classList.add('selected');
+                    selectedWord = this.textContent;
+                });
+
+                document.querySelector('#custom-word-list').appendChild(newListItem);
+
+                const wordFound = addWordToGrid(newWord);
+                if (wordFound) {
+                    drawGrid(); 
+                }
+
+                newWordInput.value = '';
+            }
+        });
+
+        let selectedWord = "";
         let selectedCells = [];
 
-        wordSearchGrid.addEventListener('click', function(event) {
+        document.getElementById('word-search').addEventListener('click', function(event) {
             if (event.target.tagName === 'TD' && selectedWord) {
                 event.target.classList.add('highlighted');
                 selectedCells.push(event.target);
@@ -140,11 +298,10 @@ for (var i = 0; i < wordListItems.length; i++) {
                         }
                     }
 
-                    selectedCells = []; // Reset after checking
+                    selectedCells = []; 
                 }
             }
         });
-
     </script>
 </body>
 </html>
