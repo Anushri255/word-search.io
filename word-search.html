@@ -25,8 +25,8 @@
         #word-search td {
             border: 1px solid #000;
             padding: 10px;
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             text-align: center;
             font-weight: bold;
             font-size: 18px;
@@ -75,11 +75,14 @@
     <div id="word-list">
         <h3>Choose a word to find:</h3>
         <ul id="word-list-ul">
-            <!-- Custom words will be inserted here -->
         </ul>
     </div>
     <div id="group">
         <table id="word-search"></table>
+        <div id="stopwatch">
+            <p>Time Spent: <span id="time">00:00</span></p>
+            <button id="stopwatch-button">Complete</button>
+        </div>
     </div>
     
     <script>
@@ -87,6 +90,8 @@
         let grid = Array.from({ length: 10 }, () => Array(10).fill('X'));
         const wordSearchGrid = document.getElementById('word-search');
         let selectedWord = "";
+        let timer;
+        let seconds = 0;
 
         function drawGrid() {
             wordSearchGrid.innerHTML = '';
@@ -158,10 +163,25 @@
             });
         }
 
+        function startStopwatch() {
+            timer = setInterval(() => {
+                seconds++;
+                let mins = Math.floor(seconds / 60);
+                let secs = seconds % 60;
+                document.getElementById('time').textContent = 
+                    (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
+            }, 1000);
+        }
+
+        function stopStopwatch() {
+            clearInterval(timer);
+        }
+
         document.getElementById('play-default').addEventListener('click', function() {
             generateCustomGrid(predefinedWords);
             document.getElementById('group').style.display = 'inline-block';
             document.getElementById('custom-input').style.display = 'none';
+            startStopwatch();
         });
 
         document.getElementById('play-custom').addEventListener('click', function() {
@@ -174,6 +194,11 @@
             generateCustomGrid(words);
             document.getElementById('group').style.display = 'inline-block';
             document.getElementById('custom-input').style.display = 'none';
+            startStopwatch();
+        });
+
+        document.getElementById('stopwatch-button').addEventListener('click', function() {
+            stopStopwatch();
         });
 
         const wordListUl = document.getElementById('word-list-ul');
