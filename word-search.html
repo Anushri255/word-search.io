@@ -13,7 +13,7 @@
         }
 
         #group {
-            display: none; /* Hide the grid initially */
+            display: none;
             margin-top: 20px;
         }
 
@@ -65,6 +65,12 @@
     <h1>Word Search Game</h1>
     <div id="menu">
         <button id="play-default">Play Default Game</button>
+        <button id="play-custom">Custom</button>
+    </div>
+    <div id="custom-input" style="display: none;">
+        <h3>Enter words separated by commas:</h3>
+        <input type="text" id="word-input">
+        <button id="generate-grid">Generate Grid</button>
     </div>
     <div id="word-list">
         <h3>Choose a word to find:</h3>
@@ -79,7 +85,7 @@
     </div>
     
     <script>
-        const grid = [
+        let grid = [
             ['T', 'E', 'S', 'T', 'X', 'X', 'X', 'X', 'X', 'X'],
             ['W', 'O', 'R', 'D', 'X', 'X', 'X', 'X', 'X', 'X'],
             ['S', 'E', 'A', 'R', 'C', 'H', 'X', 'X', 'X', 'X'],
@@ -108,9 +114,35 @@
             }
         }
 
-        document.getElementById('play-default').addEventListener('click', function() {
-            document.getElementById('group').style.display = 'inline-block'; // Show the grid
+        function generateCustomGrid(words) {
+            grid = Array.from({ length: 10 }, () => Array(10).fill('X'));
+            words.forEach(word => {
+                let startX = Math.floor(Math.random() * 10);
+                let startY = Math.floor(Math.random() * 10);
+                for (let i = 0; i < word.length; i++) {
+                    if (startX + i < 10) {
+                        grid[startX + i][startY] = word[i];
+                    }
+                }
+            });
             drawGrid();
+        }
+
+        document.getElementById('play-default').addEventListener('click', function() {
+            document.getElementById('group').style.display = 'inline-block';
+            drawGrid();
+        });
+
+        document.getElementById('play-custom').addEventListener('click', function() {
+            document.getElementById('custom-input').style.display = 'block';
+            document.getElementById('group').style.display = 'none';
+        });
+
+        document.getElementById('generate-grid').addEventListener('click', function() {
+            const words = document.getElementById('word-input').value.split(',').map(word => word.trim());
+            generateCustomGrid(words);
+            document.getElementById('group').style.display = 'inline-block';
+            document.getElementById('custom-input').style.display = 'none';
         });
 
         const wordListItems = document.querySelectorAll('#word-list li');
