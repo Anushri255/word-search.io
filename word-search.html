@@ -1,1 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f4f4f4;
+}
+
+h1 {
+    color: #ee5353;
+}
+
+#group {
+    display: inline-block;
+    margin-top: 20px;
+}
+
+#word-search {
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+
+#word-search td {
+    border: 1px solid #000;
+    padding: 10px;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+#word-list {
+    margin-top: 20px;
+}
+
+#word-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#word-list li {
+    font-size: 18px;
+    color: #555;
+}
+
+    </style>
+</head>
+<body>
+    <h1>Word Search Game</h1>
+    <div id="word-list">
+        <h3>Find these words:</h3>
+        <ul>
+            <li>Word 1 </li>
+            <li>Word 2 </li>
+            <li>Word 3 </li>
+
+        </ul>
+    </div>
+    <div id="group">
+        <table id="word-search">
+        </table>
+    </div>
+    
+    <script>
+        const grid = [
+    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']
+];
+
+const wordSearchGrid = document.getElementById('word-search');
+
+for (let i = 0; i < grid.length; i++) {
+    const tr = document.createElement('tr');
+    for (let j = 0; j < grid[i].length; j++) {
+        const td = document.createElement('td');
+        td.textContent = grid[i][j];
+        tr.appendChild(td);
+    }
+    wordSearchGrid.appendChild(tr);
+}
+
+
+
+    </script>
+</body>
+</html>
 
