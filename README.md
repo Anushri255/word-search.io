@@ -4,6 +4,8 @@
 
 Word Search Game where users can play with a predefined set of words or enter their own custom words. The game includes a stopwatch to track how long the user spends finding words.
 
+## Hosted on https://anushri255.github.io/word-search.io/
+
 ## Features
 
 - Play with predefined words or enter custom words.
