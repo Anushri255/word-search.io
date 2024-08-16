@@ -3,49 +3,56 @@
 <head>
     <style>
         body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background-color: #f4f4f4;
-}
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
 
-h1 {
-    color: #ee5353;
-}
+        h1 {
+            color: #ee5353;
+        }
 
-#group {
-    display: inline-block;
-    margin-top: 20px;
-}
+        #group {
+            display: inline-block;
+            margin-top: 20px;
+        }
 
-#word-search {
-    border-collapse: collapse;
-    margin: 0 auto;
-}
+        #word-search {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
 
-#word-search td {
-    border: 1px solid #000;
-    padding: 10px;
-    width: 40px;
-    height: 40px;
-    text-align: center;
-    font-weight: bold;
-    font-size: 18px;
-}
+        #word-search td {
+            border: 1px solid #000;
+            padding: 10px;
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
 
-#word-list {
-    margin-top: 20px;
-}
+        #word-list {
+            margin-top: 20px;
+        }
 
-#word-list ul {
-    list-style-type: none;
-    padding: 0;
-}
+        #word-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
 
-#word-list li {
-    font-size: 18px;
-    color: #555;
-}
+        #word-list li {
+            font-size: 18px;
+            color: #555;
+        }
 
+        .highlighted {
+            background-color: #ddd;
+        }
+
+        .correctWord {
+            background-color: #90ee90; 
+        }
     </style>
 </head>
 <body>
@@ -57,7 +64,7 @@ h1 {
             <li>Word 2 </li>
             <li>Word 3 </li>
 
-        </ul>
+            </ul>
     </div>
     <div id="group">
         <table id="word-search">
@@ -66,33 +73,59 @@ h1 {
     
     <script>
         const grid = [
-    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
-    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
-    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
-    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
-    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
-    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
-    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
-    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
-    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
-    ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']
-];
+            ['T', 'E', 'S', 'T', 'X', 'X', 'X', 'X', 'X', 'X'],
+            ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+            ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+            ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+            ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+            ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+            ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+            ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+            ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+            ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']
+        ];
 
-const wordSearchGrid = document.getElementById('word-search');
+        const wordSearchGrid = document.getElementById('word-search');
+        const wordToFind = "TEST";
 
-for (let i = 0; i < grid.length; i++) {
-    const tr = document.createElement('tr');
-    for (let j = 0; j < grid[i].length; j++) {
-        const td = document.createElement('td');
-        td.textContent = grid[i][j];
-        tr.appendChild(td);
+        for (let i = 0; i < grid.length; i++) {
+            const tr = document.createElement('tr');
+            for (let j = 0; j < grid[i].length; j++) {
+                const td = document.createElement('td');
+                td.textContent = grid[i][j];
+                tr.appendChild(td);
+            }
+            wordSearchGrid.appendChild(tr);
+        }
+
+        let selectedCells = [];
+
+        wordSearchGrid.addEventListener('click', function(event) {
+    if (event.target.tagName === 'TD') {
+        event.target.classList.add('highlighted');
+        selectedCells.push(event.target);
+
+        if (selectedCells.length === wordToFind.length) {
+            var selectedWord = "";
+            for (var i = 0; i < selectedCells.length; i++) {
+                selectedWord += selectedCells[i].textContent;
+            }
+
+            if (selectedWord === wordToFind) {
+                for (var i = 0; i < selectedCells.length; i++) {
+                    selectedCells[i].classList.add('correctWord');
+                }
+            } else {
+                for (var i = 0; i < selectedCells.length; i++) {
+                    selectedCells[i].classList.remove('highlighted');
+                }
+            }
+
+            selectedCells = []; 
+        }
     }
-    wordSearchGrid.appendChild(tr);
-}
-
-
+});
 
     </script>
 </body>
 </html>
-
